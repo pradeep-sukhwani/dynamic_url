@@ -12,6 +12,8 @@ class Command(BaseCommand):
         for item in url_queryset:
             created_on_in_ist = item.created_on + timedelta(hours=5, minutes=30)
             if datetime.now().astimezone() > (created_on_in_ist + timedelta(hours=1)):
+                self.stdout.write(self.style.SUCCESS(item.endpoint))
                 item.url_details.all().delete()
                 item.delete()
         self.stdout.write(self.style.SUCCESS('Successfully deleted all the endpoints who were created an hour back.'))
+        return
