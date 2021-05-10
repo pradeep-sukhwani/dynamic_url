@@ -10,10 +10,12 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         url_queryset = URL.objects.all()
         for item in url_queryset:
-            created_on_in_ist = item.created_on + timedelta(hours=5, minutes=30)
-            if datetime.now().astimezone() > (created_on_in_ist + timedelta(hours=1)):
-                self.stdout.write(self.style.SUCCESS(item.endpoint))
-                item.url_details.all().delete()
-                item.delete()
+            created_on_ahead_one_hour = item.created_on + timedelta(hours=1)
+            current_datetime = datetime.now().astimezone()
+            if item.created_on <= created_on_ahead_one_hour and created_on_ahead_one_hour >= current_datetime:
+                continue
+            self.stdout.write(self.style.SUCCESS(item.endpoint) + " ")
+            item.url_details.all().delete()
+            item.delete()
         self.stdout.write(self.style.SUCCESS('Successfully deleted all the endpoints who were created an hour back.'))
         return
