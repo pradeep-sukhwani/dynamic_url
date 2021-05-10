@@ -40,6 +40,10 @@ This is the Home page where we can create new endpoint
                     $("#modalSuccessErrorText").html('<span class="text-danger">Endpoint is required</span>')
                     return
                 }
+                if (endpoint.split(' ').length > 1) {
+                    $("#modalSuccessErrorText").html('<span class="text-danger">Endpoint cannot have space.</span>')
+                    return
+                }
                 const serializeData = form.serializeArray();
                 $.ajax({
                     method: 'POST',
