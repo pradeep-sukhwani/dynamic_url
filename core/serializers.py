@@ -31,7 +31,6 @@ class URLSerializer(serializers.ModelSerializer):
         if created_on_in_ist <= created_on_ahead_one_hour and created_on_ahead_one_hour >= current_datetime:
             time_delta = created_on_ahead_one_hour - current_datetime
             total_seconds = time_delta.total_seconds()
-            minutes = total_seconds / 60
             minutes = divmod(total_seconds, 60)
             return f'Expires in {round(minutes[0])} mins and {round(minutes[1], 2)} seconds'
         return 'Expired'
