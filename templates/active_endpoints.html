@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% comment %}
+This is the active endpoints page where we can see all the active endpoints
+{% endcomment %}
+{% load static %}
+{% block title %} Active Endpoints {% endblock %}
+{% block body %}
+    <div class="description">
+        <h3>List of all active endpoints</h3>
+    </div>
+{% endblock %}
+
+{% block external_js %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            function getData() {
+                $.ajax({
+                    method: 'GET',
+                    url: '/add_update_endpoint/',
+                    beforeSend: function () {
+                        $(".description").html('<p>Loading data...</p>')
+                    },
+                    success: function (response, status, jqXHR) {
+                        if (jqXHR.status === 200 && status === 'success') {
+                            let htmlData = '<h3>List of all active endpoints</h3>'
+                            htmlData += '<ol class="list-group">'
+                            if (response.length) {
+                                let nonExpiredData = false
+                                for (let i = 0; i < response.length; i++) {
+                                    if (response[i].minutes_seconds !== 'Expired') {
+                                        htmlData += `
+                                        <li class="list-group-item justify-content-between align-items-start">
+                                            <div>
+                                                <div>
+                                                    <strong><a href="/active_endpoint/${response[i].endpoint}" target="_blank">${response[i].endpoint}</a></strong>
+                                                </div>
+                                                <span class="badge bg-warning rounded-pill" style="float: left;">${response[i].minutes_seconds}</span>
+                                                <span class="badge bg-primary rounded-pill"
+                                                style="float: right; margin: 0 0 0 50px;">${response[i].hit_count}</span>
+                                            </div>
+                                        </li>`
+                                        nonExpiredData = true
+                                    }
+                                }
+                                if (!nonExpiredData) {
+                                    htmlData += '<p>No Active Endpoints</p>'
+                                }
+                            } else {
+                                htmlData += '<p>No Active Endpoints</p>'
+                            }
+                            htmlData += '</ol>';
+                            $(".description").html(htmlData);
+                        }
+                    }
+                });
+            }
+            getData();
+        });
+    </script>
+{% endblock %}

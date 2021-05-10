@@ -1,0 +1,32 @@
+<div class="modal fade" id="dataModal" tabindex="-1" role="dialog" aria-labelledby="dataModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="dataModalLabel">New Endpoint</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="modalForm">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="endpoint" class="col-form-label">Endpoint:</label>
+                        <input type="text" name="endpoint" class="form-control" id="endpoint">
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary" id="addNewField">
+                            + Query Params & Raw Body (Optional)</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="formSubmit">Create</button>
+            </div>
+            <div class="form-group">
+                <div id="modalSuccessErrorText" style="padding: 0 0 0 10px;"></div>
+            </div>
+        </div>
+    </div>
+</div>

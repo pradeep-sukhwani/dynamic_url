@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% comment %}
+This is the Home page where we can create new endpoint
+{% endcomment %}
+{% load static %}
+{% block title %} Home {% endblock %}
+{% block body %}
+    <div class="description" style="text-align: center;">
+        <h3>Create new HTTP endpoint to inspect the data in user friendly way!</h3>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#dataModal">+ Add New</button>
+    </div>
+{% endblock %}
+
+{% block external_js %}
+    <script type="text/javascript">
+        let originalModal = $('#modalForm').clone();
+        $(document).ready(function () {
+            function getData() {
+                $.ajax({
+                    method: 'GET',
+                    url: '/add_update_endpoint/',
+                    beforeSend: function () {
+                        $("#formSubmit").html('Please wait...')
+                        $('#formSubmit').css("cursor", 'not-allowed');
+                        $('#formSubmit').prop("disabled", true);
+                    },
+                    success: function (response, status, jqXHR) {
+                        if (jqXHR.status === 201) {
+                            $("#modalSuccessErrorText").html('<span class="text-success">Successfully created new endpoint</span>')
+                            setTimeout(function () {
+                                window.location.replace("/");
+                            }, 1000);
+                        }
+                    },
+                    error: function (response) {
+                        $("#modalSuccessErrorText").html('<span class="text-danger">' + response.responseJSON.message +
+                            '</span>')
+                        $('#formSubmit').css("cursor", 'pointer');
+                        $('#formSubmit').prop("disabled", false);
+                        $("#formSubmit").html('Create')
+                    },
+                });
+            }
+
+            $("#addNewField").on('click', function () {
+                const parent = $('#modalForm');
+                const totalDiv = parent.find('.queryRawDiv').length;
+                const newField = `
+                    <div class="queryRawDiv">
+                        <div class="form-group">
+                            <label for="query-param" class="col-form-label">Query Param:</label>
+                            <textarea name=query_param_${totalDiv.toString()} class="form-control"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="raw-body" class="col-form-label">Raw Body:</label>
+                            <textarea name=raw_body_${totalDiv.toString()} class="form-control"></textarea>
+                        </div>
+                        <hr />
+                    </div>
+                `;
+                parent.append(newField);
+            });
+            $("#formSubmit").click(function () {
+                const form = $("#modalForm")
+                const endpoint = $("#endpoint").val()
+                if (!endpoint) {
+                    $("#modalSuccessErrorText").html('<span class="text-danger">Endpoint is required</span>')
+                    return
+                }
+                const serializeData = form.serializeArray();
+                $.ajax({
+                    method: 'POST',
+                    url: '/add_update_endpoint/',
+                    data: serializeData,
+                    beforeSend: function () {
+                        $("#formSubmit").html('Please wait...')
+                        $('#formSubmit').css("cursor", 'not-allowed');
+                        $('#formSubmit').prop("disabled", true);
+                    },
+                    success: function (response, status, jqXHR) {
+                        if (jqXHR.status === 201) {
+                            $("#modalSuccessErrorText").html('<span class="text-success">Successfully created new endpoint</span>')
+                            setTimeout(function () {
+                                window.location.replace("/");
+                            }, 1000);
+                        }
+                    },
+                    error: function (response) {
+                        $("#modalSuccessErrorText").html(`<span class="text-danger">${response.responseJSON.message}</span>`)
+                        $('#formSubmit').css("cursor", 'pointer');
+                        $('#formSubmit').prop("disabled", false);
+                        $("#formSubmit").html('Create')
+                    },
+                });
+            })
+            /*
+            $('#dataModal').on('hidden.bs.modal', function () {
+                $('.modal-body').empty();
+                $('.modal-body').append(originalModal);
+            });*/
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% comment %}
+This is the view endpoint page where we can see particular endpoint details
+{% endcomment %}
+{% load static %}
+{% block title %} Active Endpoints {% endblock %}
+{% block body %}
+    <input type="hidden" value="{{ endpoint }}" id="endpoint">
+    <div class="description"></div>
+{% endblock %}
+
+{% block external_js %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#copyURL").click(function () {
+                let tempEle = document.body.appendChild(document.createElement("input"));
+                tempEle.value = $(location).attr('href');
+                tempEle.focus()
+                tempEle.select()
+                document.execCommand("copy");
+                tempEle.remove();
+            });
+
+            function getData() {
+                $.ajax({
+                    method: 'GET',
+                    url: '/add_update_endpoint/{{ endpoint }}',
+                    beforeSend: function () {
+                        $(".description").html('<p>Loading data...</p>')
+                    },
+                    success: function (response, status, jqXHR) {
+                        let htmlData = ''
+                        if (jqXHR.status === 200 && status === 'success' && response.minutes_seconds !== 'Expired') {
+                            htmlData += `
+                            <div class="jumbotron" style="padding: 2rem 1rem; display: flex; justify-content: space-between;">
+                                <div>
+                                    <strong>${$(location).attr('href')}</strong>
+                                </div>
+                                <div style="display: flex;">
+                                    <div style="padding: 0 20px 0 0;">
+                                        <span class="badge bg-warning rounded-pill" style="float: left;">
+                                            ${response.minutes_seconds}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            `
+                            for (let i = 0; i < response.url_details.length; i++) {
+                                htmlData += `
+                                    <div class="jumbotron" style="padding: 2rem 1rem;">
+                                        <div><strong>Query Param</strong></div>
+                                        <div>${response.url_details[i].query_param}</div>
+                                        <hr class="my-4">
+                                        <div><strong>Raw Body</strong></div>
+                                        <div>${response.url_details[i].raw_body}</div>
+                                        <hr class="my-4">
+                                        <div><strong>Headers</strong></div>
+                                        <div>${response.url_details[i].headers}</div>
+                                    </div>
+                                `
+                            }
+                        } else {
+                            htmlData = `<p>Could not found endpoint: ${$("#endpoint").val()}</p>`
+                        }
+                        $(".description").html(htmlData);
+                    },
+                    error: function (response) {
+                        $(".description").html(`<p>${response.responseJSON.message}</p>`)
+                    },
+                });
+            }
+            getData();
+        });
+    </script>
+{% endblock %}
