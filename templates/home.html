@@ -15,33 +15,6 @@ This is the Home page where we can create new endpoint
     <script type="text/javascript">
         let originalModal = $('#modalForm').clone();
         $(document).ready(function () {
-            function getData() {
-                $.ajax({
-                    method: 'GET',
-                    url: '/add_update_endpoint/',
-                    beforeSend: function () {
-                        $("#formSubmit").html('Please wait...')
-                        $('#formSubmit').css("cursor", 'not-allowed');
-                        $('#formSubmit').prop("disabled", true);
-                    },
-                    success: function (response, status, jqXHR) {
-                        if (jqXHR.status === 201) {
-                            $("#modalSuccessErrorText").html('<span class="text-success">Successfully created new endpoint</span>')
-                            setTimeout(function () {
-                                window.location.replace("/");
-                            }, 1000);
-                        }
-                    },
-                    error: function (response) {
-                        $("#modalSuccessErrorText").html('<span class="text-danger">' + response.responseJSON.message +
-                            '</span>')
-                        $('#formSubmit').css("cursor", 'pointer');
-                        $('#formSubmit').prop("disabled", false);
-                        $("#formSubmit").html('Create')
-                    },
-                });
-            }
-
             $("#addNewField").on('click', function () {
                 const parent = $('#modalForm');
                 const totalDiv = parent.find('.queryRawDiv').length;
@@ -81,7 +54,7 @@ This is the Home page where we can create new endpoint
                         if (jqXHR.status === 201) {
                             $("#modalSuccessErrorText").html('<span class="text-success">Successfully created new endpoint</span>')
                             setTimeout(function () {
-                                window.location.replace("/");
+                                window.location.replace("/active_endpoints");
                             }, 1000);
                         }
                     },
