@@ -29,6 +29,13 @@ DEBUG = True
 ALLOWED_HOSTS = ["*"]
 SECURE_SSL_REDIRECT = False
 ```
+
+## Migrate
+```bash
+python manage.py migrate # Apply Database migration
+```
+
+
 ## Run Server
 ```bash
 python manage.py runserver # Start Django Server
