@@ -1,0 +1,8 @@
+*.idea
+*.pyc
+*.sqlite3
+media_files/
+*.pyo
+__pycache__/
+dump.rdb
+dynamic_url/custom_settings.py
